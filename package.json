@@ -22,6 +22,7 @@
     "debug": "^2.2.0",
     "express.io": "^1.1.13",
     "fs-extra-promise": "^0.2.0",
-    "lodash": "^3.10.0"
+    "lodash": "^3.10.0",
+    "request": "^2.60.0"
   }
 }

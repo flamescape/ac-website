@@ -2,11 +2,35 @@
 <html ng-app="app">
 <head>
 	<title>AC-Website</title>
+	<style type="text/css">
+		.trackmap {
+			position: relative;
+			background: #ccc;
+		}
+		.trackmap img {
+			position: relative;
+			z-index: 1;
+		}
+		.car {
+			position:  absolute;
+			background: red;
+			width: 10px;
+			height: 10px;
+			border-radius: 10px;
+			z-index: 5;
+			margin-left: -5px;
+			margin-top: -5px;
+		}
+	</style>
 </head>
 <body ng-controller="MainCtrl as mc">
-	<h1>Hello world!</h1>
+	
+	<div class="trackmap">
+		<img src="/tracks/{{mc.acsp.info.track}}" />
+		<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>
+	</div>
 
-	<p>This is a paragraph</p>
+	<div style="white-space: pre;">{{mc.acsp.info|json}}</div>
 
 	<div style="background:green;padding:10px;white-space:pre;">
 		<div>{{mc.acsp.sessionState|json}}</div>
