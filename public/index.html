@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<title>AC-Website</title>
+</head>
+<body ng-controller="MainCtrl as mc">
+	<h1>Hello world!</h1>
+
+	<p>This is a paragraph</p>
+
+	<div style="background:green;padding:10px;white-space:pre;">
+		<div>{{mc.acsp.sessionState|json}}</div>
+	</div>
+
+
+	<div style="background:yellow;padding:10px;white-space:pre;">
+		<div ng-repeat="c in mc.acsp.state">{{c|json}}</div>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>
+	<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js'></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/ng-app.js"></script>
+</body>
+</html>

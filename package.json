@@ -1,0 +1,27 @@
+{
+  "name": "ac-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flamescape/ac-website.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flamescape/ac-website/issues"
+  },
+  "homepage": "https://github.com/flamescape/ac-website#readme",
+  "dependencies": {
+    "acsp": "0.0.7",
+    "bluebird": "^2.9.34",
+    "debug": "^2.2.0",
+    "express.io": "^1.1.13",
+    "fs-extra-promise": "^0.2.0",
+    "lodash": "^3.10.0"
+  }
+}
