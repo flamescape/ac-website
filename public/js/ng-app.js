@@ -42,14 +42,26 @@ angular.module('app', [])
 			$rootScope.$apply();
 		});
 
-		// acsp.state = [];
-		// for (var i = 0; i < 4; i++) {
-		// 	acsp.state[i] = {};
-		// }
+		acsp.state = [];
+		for (var i = 0; i < 4; i++) {
+			acsp.state[i] = {};
+		}
 		// acsp.state[0].pos = {x: 0, z: 151} // left
 		// acsp.state[1].pos = {x: 433, z: 81} // top 
 		// acsp.state[2].pos = {x: 565, z: 151} // right
 		// acsp.state[3].pos = {x: 277, z: 208} // bot
+
+		// acsp.state[0].driver_name = 'Bjorn';
+		// acsp.state[0].car_model = 'Abarth500'
+		// acsp.state[0].bestLap = 73353;
+		// acsp.state[0].rlaps = 1;
+		// acsp.state[0].normalized_spline_pos = 0.5;
+
+		// acsp.state[1].driver_name = 'Gareth';
+		// acsp.state[1].car_model = 'Abarth500'
+		// //acsp.state[1].bestLap = 63353;
+		// acsp.state[1].rlaps = 2;
+		// acsp.state[1].normalized_spline_pos = 0.1;
 
 		return acsp;
 	})
@@ -63,6 +75,43 @@ angular.module('app', [])
 				left: (((car.pos.x - 0) / (565 - 0)) * (575-23)+23)+'px'
 			}
 		};
+
+		this.orderFunction = function(car){
+			var session = acsp.sessionState.type;
+			// if in race
+			if(session == 3){
+				// return the car in front
+				return -(car.rlaps + car.normalized_spline_pos);
+			}
+			// if in any other session
+			else if(car.bestLap){
+				// return the best lap
+				return car.bestLap;
+			}			
+			// no time has been set
+			else if(!car.bestLap){				
+				return Infinity;
+			}
+		};
+		this.toLapTime = function(time){
+			if(!time){
+				return "-";
+			}
+			var minutes =  Math.floor(time / 60000);
+			time = time - minutes * 60000;
+			var seconds = Math.floor(time / 1000);
+			if(seconds < 10){
+				seconds = '0'+seconds;
+			}			
+			time -= seconds * 1000;			
+			if(time < 100 && time > 10){
+				time = '0' + time;
+
+			}
+			if(time < 10)
+				time = '00'+time;
+			return minutes +':'+seconds+':'+time;
+		};		
 	})
 
 ;

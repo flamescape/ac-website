@@ -15,7 +15,7 @@ var contentPath = "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\t
 var a = ACSP({host: '127.0.0.1', port: 11000});
 
 a.enableRealtimeReport(50);
-a.broadcastChat('/admin test');
+// a.broadcastChat('/admin test');
 
 a.on('car_update', function(carupdate){
 	debug('CARUPDATE', carupdate);
@@ -37,8 +37,11 @@ a.on('connection_closed',function(clientinfo){
 });
 
 a.on('lap_completed',function(clientinfo){	
-	if(clientinfo.cuts == 0 && carState[clientinfo.car_id].bestLap > clientinfo.laptime){
-		carState[clientinfo.car_id].bestLap = clientinfo.laptime;
+	if(clientinfo.cuts == 0){
+		carState[clientinfo.car_id].lastLap = clientinfo.laptime;
+		if(carState[clientinfo.car_id].bestLap > clientinfo.laptime){
+			carState[clientinfo.car_id].bestLap = clientinfo.laptime;
+		}
 	}
 	clientinfo.leaderboard.forEach(function(l){
 		if (!carState[l.rcar_id]) return;
@@ -54,6 +57,15 @@ a.on('new_session',function(sessioninfo){
 	app.io.broadcast('session_state',sessioninfo);
 
 });
+
+a.on('collide_car',function(clientinfo){
+	a.sendChat(clientinfo.car_id,'Drive carefully!')
+	a.sendChat(clientinfo.other_car_id,'Don\'t crash into people!')
+});
+a.on('collide_env',function(clientinfo){
+	a.sendChat(clientinfo.car_id,'Be careful!')
+});
+
 
 a.on('end_session',function(){
 	sessionState.ended = true;

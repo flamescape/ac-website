@@ -21,6 +21,9 @@
 			margin-left: -5px;
 			margin-top: -5px;
 		}
+		.leaderboard{
+			background: red;
+		}
 	</style>
 </head>
 <body ng-controller="MainCtrl as mc">
@@ -28,6 +31,29 @@
 	<div class="trackmap">
 		<img src="/tracks/{{mc.acsp.info.track}}" />
 		<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>
+	</div>
+
+	<div class="leaderboard">
+		<h1>Leaderboard</h1>
+		<p>Current Session: {{mc.acsp.sessionState.name}}</p>
+		<table>
+			<tr>
+				<th>Pos.</th>
+				<th>Name</td>
+				<th>Car</td>
+				<th>Best Lap</td>
+				<th>Last Lap</th>
+				<th>Laps</td>
+			</tr>
+			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction">
+				<td>{{$index + 1}}</td>
+				<td>{{c.driver_name}}</td>
+				<td>{{c.car_model}}</td>
+				<td>{{mc.toLapTime(c.bestLap)}}</td>
+				<td>{{mc.toLapTime(c.lastLap)}}</td>
+				<td>{{c.rlaps}}</td>
+			</tr>
+		</table>		
 	</div>
 
 	<div style="white-space: pre;">{{mc.acsp.info|json}}</div>
