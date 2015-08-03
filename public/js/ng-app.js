@@ -11,7 +11,7 @@ angular.module('app', [])
 		io.emit('hello');
 
 		io.on('car_state', function(car_state){
-			console.log('state:', car_state)
+			//console.log('state:', car_state)
 			acsp.state = car_state;
 			$rootScope.$apply();
 		});
@@ -30,6 +30,8 @@ angular.module('app', [])
 		io.on('session_state', function(session_state){
 			acsp.sessionState = session_state;
 			$rootScope.$apply();
+			// on new session clear the leaderboard
+			// TODO
 		})
 
 		io.on('connection_closed',function(clientinfo){
@@ -39,6 +41,12 @@ angular.module('app', [])
 
 		io.on('info', function(info){
 			acsp.info = info;
+
+			// start the session timer
+			setInterval(function(){
+				acsp.info.timeleft -= 1;
+				$rootScope.$apply();
+			},1000)						
 			$rootScope.$apply();
 		});
 
@@ -51,17 +59,17 @@ angular.module('app', [])
 		// acsp.state[2].pos = {x: 565, z: 151} // right
 		// acsp.state[3].pos = {x: 277, z: 208} // bot
 
-		// acsp.state[0].driver_name = 'Bjorn';
-		// acsp.state[0].car_model = 'Abarth500'
-		// acsp.state[0].bestLap = 73353;
-		// acsp.state[0].rlaps = 1;
-		// acsp.state[0].normalized_spline_pos = 0.5;
+/*		acsp.state[0].driver_name = 'Bjorn';
+		acsp.state[0].car_model = 'Abarth500'
+		acsp.state[0].bestLap = 73353;
+		acsp.state[0].rlaps = 1;
+		acsp.state[0].normalized_spline_pos = 0.5;
 
-		// acsp.state[1].driver_name = 'Gareth';
-		// acsp.state[1].car_model = 'Abarth500'
-		// //acsp.state[1].bestLap = 63353;
-		// acsp.state[1].rlaps = 2;
-		// acsp.state[1].normalized_spline_pos = 0.1;
+		acsp.state[1].driver_name = 'Gareth';
+		acsp.state[1].car_model = 'Abarth500'
+		acsp.state[1].bestLap = 63353;
+		acsp.state[1].rlaps = 2;
+		acsp.state[1].normalized_spline_pos = 0.1;*/
 
 		return acsp;
 	})
@@ -111,7 +119,10 @@ angular.module('app', [])
 			if(time < 10)
 				time = '00'+time;
 			return minutes +':'+seconds+':'+time;
-		};		
+		};	
+		this.leaderLap = function(){			
+			return _.max(_.pluck(acsp.state, 'rlaps'))
+		}	
 	})
 
 ;
