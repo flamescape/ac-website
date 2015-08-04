@@ -29,9 +29,20 @@ angular.module('app', [])
 
 		io.on('session_state', function(session_state){
 			acsp.sessionState = session_state;
+			console.log(session_state.type)
+			// if not in a race, reset the timer
+			if(acsp.sessionState.type != 3){				
+				acsp.info.timeleft = acsp.info.durations[acsp.sessionState.type - 1] * 60
+			}			
+			// Then clear all the laptimes for the next session
+			console.log(acsp.state[0])
+			acsp.state = acsp.state.map(function(car){
+				car.bestLap = 0;
+				car.lastLap = 0;
+				car.laps = 0;
+				return car;
+			});
 			$rootScope.$apply();
-			// on new session clear the leaderboard
-			// TODO
 		})
 
 		io.on('connection_closed',function(clientinfo){
@@ -39,10 +50,10 @@ angular.module('app', [])
 			$rootScope.$apply();
 		});
 
-		io.on('info', function(info){
+		io.on('info', function(info){			
 			acsp.info = info;
 
-			// start the session timer
+			// start the session timer			
 			setInterval(function(){
 				acsp.info.timeleft -= 1;
 				$rootScope.$apply();
@@ -89,7 +100,7 @@ angular.module('app', [])
 			// if in race
 			if(session == 3){
 				// return the car in front
-				return -(car.rlaps + car.normalized_spline_pos);
+				return -(car.laps + car.normalized_spline_pos);
 			}
 			// if in any other session
 			else if(car.bestLap){
@@ -120,8 +131,8 @@ angular.module('app', [])
 				time = '00'+time;
 			return minutes +':'+seconds+':'+time;
 		};	
-		this.leaderLap = function(){			
-			return _.max(_.pluck(acsp.state, 'rlaps'))
+		this.leaderLap = function(){
+			return _.max(_.pluck(acsp.state, 'laps')) | 0
 		}	
 	})
 

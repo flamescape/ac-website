@@ -27,6 +27,7 @@ a.on('car_update', function(carupdate){
 a.on('new_connection',function(clientinfo){
 	clientinfo.connected = true;
 	clientinfo.bestLap = Infinity;
+	clientinfo.laps = 1;
 	carState[clientinfo.car_id] = clientinfo;
 	debug('NEW PLAYER', clientinfo);
 	app.io.broadcast('new_connection', clientinfo);
@@ -37,6 +38,7 @@ a.on('connection_closed',function(clientinfo){
 });
 
 a.on('lap_completed',function(clientinfo){	
+	carState[clientinfo.car_id].laps += 1;
 	if(clientinfo.cuts == 0){
 		carState[clientinfo.car_id].lastLap = clientinfo.laptime;
 		if(carState[clientinfo.car_id].bestLap > clientinfo.laptime){
@@ -52,9 +54,26 @@ a.on('lap_completed',function(clientinfo){
 	app.io.broadcast('car_state', carState);
 });
 a.on('new_session',function(sessioninfo){
+	// send out the new sessionState
 	sessionState = sessioninfo;
 	sessionState.ended = false;
 	app.io.broadcast('session_state',sessioninfo);
+
+	// Then clear all the laptimes for the next session
+	carState = carState.map(function(car){
+		car.bestLap = 0;
+		car.lastLap = 0;
+		car.laps = 0;
+		return car;
+	});
+
+	// also send out the new server info
+	// request({
+	// 	uri: 'http://localhost:8999/INFO',
+	// 	json: true
+	// }).spread(function(res, body){
+	// 	req.io.emit('info', body);		
+	// })
 
 });
 
@@ -70,6 +89,7 @@ a.on('collide_env',function(clientinfo){
 a.on('end_session',function(){
 	sessionState.ended = true;
 	app.io.broadcast('session_state',sessionState);
+	// TODO: store all the laptimes
 });
 
 app.io.route('hello', function(req){
@@ -81,6 +101,11 @@ app.io.route('hello', function(req){
 	}).spread(function(res, body){
 		req.io.emit('info', body);
 	})
+});
+
+app.io.route('new_session_info',function(req){
+	req.io.emit('session_state', sessionState);
+
 });
 
 app.use(express.static(path.join(__dirname, './public')));
