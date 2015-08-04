@@ -65,33 +65,43 @@ angular.module('app', [])
 		for (var i = 0; i < 4; i++) {
 			acsp.state[i] = {};
 		}
+
 		// acsp.state[0].pos = {x: 0, z: 151} // left
 		// acsp.state[1].pos = {x: 433, z: 81} // top 
 		// acsp.state[2].pos = {x: 565, z: 151} // right
 		// acsp.state[3].pos = {x: 277, z: 208} // bot
 
-/*		acsp.state[0].driver_name = 'Bjorn';
-		acsp.state[0].car_model = 'Abarth500'
-		acsp.state[0].bestLap = 73353;
-		acsp.state[0].rlaps = 1;
-		acsp.state[0].normalized_spline_pos = 0.5;
+		// acsp.state[0].driver_name = 'Bjorn';
+		// acsp.state[0].car_model = 'Abarth500'
+		// acsp.state[0].bestLap = 73353;
+		// acsp.state[0].rlaps = 1;
+		// acsp.state[0].normalized_spline_pos = 0.5;
 
-		acsp.state[1].driver_name = 'Gareth';
-		acsp.state[1].car_model = 'Abarth500'
-		acsp.state[1].bestLap = 63353;
-		acsp.state[1].rlaps = 2;
-		acsp.state[1].normalized_spline_pos = 0.1;*/
+		// acsp.state[1].driver_name = 'Gareth';
+		// acsp.state[1].car_model = 'Abarth500'
+		// acsp.state[1].bestLap = 63353;
+		// acsp.state[1].rlaps = 2;
+		// acsp.state[1].normalized_spline_pos = 0.1;
 
 		return acsp;
+	})
+
+	.filter('toLapTime', function(){
+		return function(time, format){
+			return !time ? "-" : moment.utc(time).format(format || "m:ss.SSS");
+		};
 	})
 
 	.controller('MainCtrl', function(acsp){
 		this.acsp = acsp;
 
+		
+
 		this.map2map = function(car){
+			var a = acsp.info.track_config.anchor_points;
 			return {
-				top: (((car.pos.z - 80) / (208 - 80)) * (235-101)+101)+'px',
-				left: (((car.pos.x - 0) / (565 - 0)) * (575-23)+23)+'px'
+				top: (((car.pos.z - a.game.min.z) / (a.game.max.z - a.game.min.z)) * (a.map.max.y-a.map.min.y)+a.map.min.y)+'px',
+				left: (((car.pos.x - a.game.min.x) / (a.game.max.x - a.game.min.x)) * (a.map.max.x-a.map.min.x)+a.map.min.x)+'px'
 			}
 		};
 
@@ -112,27 +122,8 @@ angular.module('app', [])
 				return Infinity;
 			}
 		};
-		this.toLapTime = function(time){
-			if(!time){
-				return "-";
-			}
-			var minutes =  Math.floor(time / 60000);
-			time = time - minutes * 60000;
-			var seconds = Math.floor(time / 1000);
-			if(seconds < 10){
-				seconds = '0'+seconds;
-			}			
-			time -= seconds * 1000;			
-			if(time < 100 && time > 10){
-				time = '0' + time;
-
-			}
-			if(time < 10)
-				time = '00'+time;
-			return minutes +':'+seconds+':'+time;
-		};	
 		this.leaderLap = function(){
-			return _.max(_.pluck(acsp.state, 'laps')) | 0
+			return _.max(_.pluck(acsp.state, 'laps')) | 0;
 		}	
 	})
 

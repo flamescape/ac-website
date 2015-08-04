@@ -33,7 +33,7 @@
 		<ul>
 			<li>Current Track: {{mc.acsp.info.track}}</li>
 			<li>Current Session: {{mc.acsp.sessionState.name}}</li>
-			<li ng-hide='mc.acsp.sessionState.name == "Race"'>Time Remaining: {{mc.toLapTime(mc.acsp.info.timeleft*1000)}}</li>
+			<li ng-hide='mc.acsp.sessionState.name == "Race"'>Time Remaining: {{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</li>
 			<li ng-hide='mc.acsp.sessionState.name != "Race"'>Laps Remaining: {{mc.acsp.sessionState.laps - mc.leaderLap()}}</li>
 		</ul>
 	</div>
@@ -59,8 +59,8 @@
 				<td>{{$index + 1}}</td>
 				<td>{{c.driver_name}}</td>
 				<td>{{c.car_model}}</td>
-				<td>{{mc.toLapTime(c.bestLap)}}</td>
-				<td>{{mc.toLapTime(c.lastLap)}}</td>
+				<td>{{c.bestLap | toLapTime}}</td>
+				<td>{{c.lastLap | toLapTime}}</td>
 				<td>{{c.laps}}</td>
 			</tr>
 		</table>		
@@ -77,6 +77,7 @@
 		<div ng-repeat="c in mc.acsp.state">{{c|json}}</div>
 	</div>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>
 	<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js'></script>
 	<script src="/socket.io/socket.io.js"></script>

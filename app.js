@@ -5,6 +5,7 @@ var Promise = require('bluebird');
 var path = require('path');
 var debug = require('debug')('ac-website');
 var request = Promise.promisify(require('request'));
+var fs = require('fs-extra-promise');
 
 var app = express().http().io();
 
@@ -95,12 +96,16 @@ a.on('end_session',function(){
 app.io.route('hello', function(req){
 	req.io.emit('car_state', carState);
 	req.io.emit('session_state', sessionState);
+
 	request({
 		uri: 'http://localhost:8999/INFO',
 		json: true
-	}).spread(function(res, body){
-		req.io.emit('info', body);
-	})
+	}).spread(function(res, info){
+		return fs.readJsonAsync('./cfg/tracks/' + info.track + '.json').then(function(config){
+			info.track_config = config;
+			req.io.emit('info', info);
+		});
+	});
 });
 
 app.io.route('new_session_info',function(req){
@@ -113,7 +118,12 @@ app.use(express.static(path.join(__dirname, './public')));
 app.get('/tracks/:id', function(req, res){
 	var trackPath = req.params.id.replace(/-/g, '/');
 	var mapPath = path.join(contentPath, trackPath, 'map.png');
-	res.sendfile(mapPath);
+	fs.existsAsync(mapPath).then(function(exists){
+		if (!exists) throw Error('File not found');
+		res.sendfile(mapPath);
+	}).catch(function(err){
+		res.status(404).send('Nope!');
+	});
 });
 
 app.listen(80);
