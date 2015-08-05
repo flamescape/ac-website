@@ -98,10 +98,20 @@ angular.module('app', [])
 		
 
 		this.map2map = function(car){
-			var a = acsp.info.track_config.anchor_points;
-			return {
-				top: (((car.pos.z - a.game.min.z) / (a.game.max.z - a.game.min.z)) * (a.map.max.y-a.map.min.y)+a.map.min.y)+'px',
-				left: (((car.pos.x - a.game.min.x) / (a.game.max.x - a.game.min.x)) * (a.map.max.x-a.map.min.x)+a.map.min.x)+'px'
+			var a = acsp.info.track_config;
+			var scale_factor = +a.SCALE_FACTOR;
+			var z_offset = +a.Z_OFFSET;
+			var x_offset = +a.X_OFFSET;
+			var w = +a.WIDTH;
+			var h = +a.HEIGHT;
+			var margin = +a.MARGIN;
+
+			var x = ((car.pos.x + x_offset) / scale_factor);
+			var y = ((car.pos.z + z_offset) / scale_factor);
+
+			return{
+				top: y +'px',
+				left: x +'px'
 			}
 		};
 

@@ -22,7 +22,7 @@
 			margin-top: -5px;
 		}
 		.leaderboard{
-			background: red;
+			/*background: red;*/
 		}
 	</style>
 </head>
@@ -31,7 +31,7 @@
 	<div class='session_info'>
 		<h1>Session info</h1>
 		<ul>
-			<li>Current Track: {{mc.acsp.info.track}}</li>
+			<li>Current Track: {{mc.acsp.info.track_config.png_path}}</li>
 			<li>Current Session: {{mc.acsp.sessionState.name}}</li>
 			<li ng-hide='mc.acsp.sessionState.name == "Race"'>Time Remaining: {{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</li>
 			<li ng-hide='mc.acsp.sessionState.name != "Race"'>Laps Remaining: {{mc.acsp.sessionState.laps - mc.leaderLap()}}</li>
@@ -39,7 +39,7 @@
 	</div>
 
 	<div class="trackmap">
-		<img src="/tracks/{{mc.acsp.info.track}}" />
+		<img ng-src="/tracks/{{mc.acsp.info.track}}" />
 		<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>
 	</div>
 

@@ -6,6 +6,7 @@ var path = require('path');
 var debug = require('debug')('ac-website');
 var request = Promise.promisify(require('request'));
 var fs = require('fs-extra-promise');
+var iniparser = require('iniparser');
 
 var app = express().http().io();
 
@@ -13,6 +14,7 @@ var carState = [];
 var sessionState = {};
 
 var contentPath = "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks";
+var mapPath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\assettocorsa\\content\\tracks\\spa\\data\\map.ini"
 var a = ACSP({host: '127.0.0.1', port: 11000});
 
 a.enableRealtimeReport(50);
@@ -91,6 +93,9 @@ a.on('end_session',function(){
 	sessionState.ended = true;
 	app.io.broadcast('session_state',sessionState);
 	// TODO: store all the laptimes
+	carState = carState.filter(function(car){
+		return car.connected;
+	});
 });
 
 app.io.route('hello', function(req){
@@ -101,10 +106,15 @@ app.io.route('hello', function(req){
 		uri: 'http://localhost:8999/INFO',
 		json: true
 	}).spread(function(res, info){
-		return fs.readJsonAsync('./cfg/tracks/' + info.track + '.json').then(function(config){
-			info.track_config = config;
-			req.io.emit('info', info);
+		var iniPath = path.join(contentPath,info.track,'data','map.ini');
+		return iniparser.parse(iniPath,function(err, data){			
+			info.track_config = data.PARAMETERS;
+			req.io.emit('info',info);
 		});
+		// return fs.readJsonAsync('./cfg/tracks/' + info.track + '.json').then(function(config){
+		// 	info.track_config = config;
+		// 	req.io.emit('info', info);
+		// });
 	});
 });
 
