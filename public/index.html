@@ -2,49 +2,29 @@
 <html ng-app="app">
 <head>
 	<title>AC-Website</title>
-	<style type="text/css">
-		.trackmap {
-			position: relative;
-			background: #ccc;
-		}
-		.trackmap img {
-			position: relative;
-			z-index: 1;
-		}
-		.car {
-			position:  absolute;
-			background: red;
-			width: 10px;
-			height: 10px;
-			border-radius: 10px;
-			z-index: 5;
-			margin-left: -5px;
-			margin-top: -5px;
-		}
-		.leaderboard{
-			/*background: red;*/
-		}
-	</style>
+	<link rel='stylesheet' type="text/css" href="css/style.css"></style>
+
 </head>
 <body ng-controller="MainCtrl as mc">
-
+	<h1>Kiba.tv Assetto Corsa Server</h1>
 	<div class='session_info'>
-		<h1>Session info</h1>
+		<h2>Session info</h2>
 		<ul>
-			<li>Current Track: {{mc.acsp.info.track_config.png_path}}</li>
+			<li>Current Track: {{mc.acsp.info.track | propercase}}</li>
 			<li>Current Session: {{mc.acsp.sessionState.name}}</li>
 			<li ng-hide='mc.acsp.sessionState.name == "Race"'>Time Remaining: {{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</li>
 			<li ng-hide='mc.acsp.sessionState.name != "Race"'>Laps Remaining: {{mc.acsp.sessionState.laps - mc.leaderLap()}}</li>
 		</ul>
 	</div>
 
-	<div class="trackmap">
+	<div class="trackmap">		
 		<img ng-src="/tracks/{{mc.acsp.info.track}}" />
 		<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>
+		<h2>Real-Time trackmap</h2>
 	</div>
 
 	<div class="leaderboard">
-		<h1>Leaderboard</h1>
+		<h2>Leaderboard</h1>
 
 		<table>
 			<tr>
@@ -63,7 +43,8 @@
 				<td>{{c.lastLap | toLapTime}}</td>
 				<td>{{c.laps}}</td>
 			</tr>
-		</table>		
+		</table>	
+		<p ng-hide='mc.acsp'>No Players :-(</p>	
 	</div>
 
 	<div style="white-space: pre;">{{mc.acsp.info|json}}</div>

@@ -12,6 +12,7 @@ angular.module('app', [])
 
 		io.on('car_state', function(car_state){
 			//console.log('state:', car_state)
+			console.log('new car state!');
 			acsp.state = car_state;
 			$rootScope.$apply();
 		});
@@ -30,19 +31,19 @@ angular.module('app', [])
 		io.on('session_state', function(session_state){
 			acsp.sessionState = session_state;
 			console.log(session_state.type)
-			// if not in a race, reset the timer
-			if(acsp.sessionState.type != 3){				
-				acsp.info.timeleft = acsp.info.durations[acsp.sessionState.type - 1] * 60
-			}			
-			// Then clear all the laptimes for the next session
-			console.log(acsp.state[0])
-			acsp.state = acsp.state.map(function(car){
-				car.bestLap = 0;
-				car.lastLap = 0;
-				car.laps = 0;
-				return car;
-			});
-			$rootScope.$apply();
+			// // if not in a race, reset the timer
+			// if(acsp.sessionState.type != 3){				
+			// 	acsp.info.timeleft = acsp.info.durations[acsp.sessionState.type - 1] * 60
+			// }			
+			// // Then clear all the laptimes for the next session
+			// console.log(acsp.state[0])
+			// acsp.state = acsp.state.map(function(car){
+			// 	car.bestLap = 0;
+			// 	car.lastLap = 0;
+			// 	car.laps = 0;
+			// 	return car;
+			// });
+			// $rootScope.$apply();
 		})
 
 		io.on('connection_closed',function(clientinfo){
@@ -52,7 +53,6 @@ angular.module('app', [])
 
 		io.on('info', function(info){			
 			acsp.info = info;
-
 			// start the session timer			
 			setInterval(function(){
 				acsp.info.timeleft -= 1;
@@ -62,9 +62,9 @@ angular.module('app', [])
 		});
 
 		acsp.state = [];
-		for (var i = 0; i < 4; i++) {
-			acsp.state[i] = {};
-		}
+		// for (var i = 0; i < 4; i++) {
+		// 	acsp.state[i] = {};
+		// }
 
 		// acsp.state[0].pos = {x: 0, z: 151} // left
 		// acsp.state[1].pos = {x: 433, z: 81} // top 
@@ -92,24 +92,26 @@ angular.module('app', [])
 		};
 	})
 
-	.controller('MainCtrl', function(acsp){
-		this.acsp = acsp;
+	.filter('propercase', function(){
+		return function(text){
+			if (!text) return "";
+			text = text.toString();
+			return text.substr(0,1).toUpperCase() + text.substr(1).toLowerCase();
+		};
+	})
 
-		
+	.controller('MainCtrl', function(acsp){
+		this.acsp = acsp;		
 
 		this.map2map = function(car){
-			var a = acsp.info.track_config;
-			var scale_factor = +a.SCALE_FACTOR;
-			var z_offset = +a.Z_OFFSET;
-			var x_offset = +a.X_OFFSET;
-			var w = +a.WIDTH;
-			var h = +a.HEIGHT;
-			var margin = +a.MARGIN;
+			var a = acsp.info.track_config;	
 
-			var x = ((car.pos.x + x_offset) / scale_factor);
-			var y = ((car.pos.z + z_offset) / scale_factor);
+			if(!car.pos) return {display: 'none'};
 
-			return{
+			var x = ((car.pos.x + a.X_OFFSET) / a.SCALE_FACTOR);
+			var y = ((car.pos.z + a.Z_OFFSET) / a.SCALE_FACTOR);
+
+			return {
 				top: y +'px',
 				left: x +'px'
 			}
@@ -120,7 +122,11 @@ angular.module('app', [])
 			// if in race
 			if(session == 3){
 				// return the car in front
-				return -(car.laps + car.normalized_spline_pos);
+				if(!car.normalized_spline_pos){
+					return -(car.laps - 1);
+				}
+
+				return -(car.laps + car.normalized_spline_pos);				
 			}
 			// if in any other session
 			else if(car.bestLap){
@@ -129,7 +135,7 @@ angular.module('app', [])
 			}			
 			// no time has been set
 			else if(!car.bestLap){				
-				return Infinity;
+				return car.car_id;
 			}
 		};
 		this.leaderLap = function(){

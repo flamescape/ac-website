@@ -6,38 +6,124 @@ var path = require('path');
 var debug = require('debug')('ac-website');
 var request = Promise.promisify(require('request'));
 var fs = require('fs-extra-promise');
-var iniparser = require('iniparser');
+var parseIni = Promise.promisify(require('iniparser').parse);
+var memoize = require('memoizee');
+require('date-utils');
 
 var app = express().http().io();
 
 var carState = [];
+
+
 var sessionState = {};
 
-var contentPath = "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks";
-var mapPath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\assettocorsa\\content\\tracks\\spa\\data\\map.ini"
-var a = ACSP({host: '127.0.0.1', port: 11000});
+var welcomeMessage = "Please visit our website: kiba.tv"
 
-a.enableRealtimeReport(50);
-// a.broadcastChat('/admin test');
+var contentPath = "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks";
+var a = ACSP({host: '127.0.0.1', port: 11000});
+a.setMaxListeners(50);
+
+var listeners = 0;
+a.on('newListener', function(){
+	listeners++;
+	debug('added a listener, now have %s listeners', listeners);
+})
+
+a.on('removeListener', function(){
+	listeners--;
+	debug('removed a listener, now have %s listeners', listeners);
+})
+
+// a.pollUntilStatusKnown(0).then(function(status){
+// 	debug('Car0 is connected:', status);
+// });
+
+
+var infoRequest = memoize(function infoRequest() {
+	console.log('DOING EXPENSIVE REQUEST');
+	return request({
+		uri: 'http://localhost:8999/INFO',
+		json: true
+	}).spread(function(res, info){
+		info.end_time = (new Date()).add({seconds: info.timeleft});
+		
+		var iniPath = path.join(contentPath,info.track,'data/map.ini');
+		return parseIni(iniPath).then(function(data){
+			info.track_config = _.mapValues(data.PARAMETERS, function(val){
+				return val*1;
+			});
+		}).return(info);
+	})
+});
+
+function getInfo() {
+	return infoRequest().then(function(info){
+		//console.log('INFO',info);
+		info.timeleft = Math.max((new Date).getSecondsBetween(info.end_time), 0);
+		return info;
+	});
+}
+function initCar(car_id) {
+	carState[car_id] = {
+		bestLap: Infinity,
+		lastLap: Infinity,
+		laps: 0
+	};
+}
+
+
+// this is just for testing
+// REMOVE AFTER TESTING!!!
+getInfo().then(function(info){
+	debug('info', info);
+	debug('Initialising %s clients', info.maxclients);
+	for (var i = 0; i < info.maxclients; i++) {
+		initCar(i);
+		a.getCarInfo(i);
+	}
+}).catch(function(){});
+
+a.on('new_session', function(){
+	console.log('NEW SESSION STARTED! RESETTING INFO');
+	infoRequest.clear();
+	getInfo().then(function(info){
+		for (var i = 0; i < info.maxclients; i++) {
+			initCar(i);
+			a.getCarInfo(i);
+		}
+	});
+});
 
 a.on('car_update', function(carupdate){
-	debug('CARUPDATE', carupdate);
-	if (!carState[carupdate.car_id]) carState[carupdate.car_id] = {};
+	// debug('CARUPDATE', carupdate);
 	_.extend(carState[carupdate.car_id], carupdate);
 	app.io.broadcast('car_update', carupdate);
 });
 
+a.on('car_info', function(carinfo){
+	if(carinfo.is_connected) {
+		_.extend(carState[carinfo.car_id],carinfo);
+	}
+	app.io.broadcast('car_info', carState[carinfo.car_id]);
+});
+
+a.on('is_connected',function(car_id){
+	carState[car_id].is_connected = true;
+	debug('Welcome Message to:', car_id);
+	a.sendChat(car_id,welcomeMessage);
+});
+
 a.on('new_connection',function(clientinfo){
-	clientinfo.connected = true;
-	clientinfo.bestLap = Infinity;
-	clientinfo.laps = 1;
-	carState[clientinfo.car_id] = clientinfo;
+	initCar(clientinfo.car_id);
+	_.extend(carState[clientinfo.car_id], clientinfo);
 	debug('NEW PLAYER', clientinfo);
-	app.io.broadcast('new_connection', clientinfo);
+	
+	app.io.broadcast('new_connection', carState[clientinfo.car_id]);
 });
 
 a.on('connection_closed',function(clientinfo){
-	carState[clientinfo.car_id].connected = false;
+	carState[clientinfo.car_id].is_connected = false;
+	app.io.broadcast('connection_closed',carState[clientinfo.car_id]);
 });
 
 a.on('lap_completed',function(clientinfo){	
@@ -57,18 +143,21 @@ a.on('lap_completed',function(clientinfo){
 	app.io.broadcast('car_state', carState);
 });
 a.on('new_session',function(sessioninfo){
+	a.enableRealtimeReport(50);
 	// send out the new sessionState
 	sessionState = sessioninfo;
 	sessionState.ended = false;
 	app.io.broadcast('session_state',sessioninfo);
 
 	// Then clear all the laptimes for the next session
-	carState = carState.map(function(car){
+	carState.map(function(car){
 		car.bestLap = 0;
 		car.lastLap = 0;
 		car.laps = 0;
 		return car;
 	});
+
+	app.io.broadcast('car_state', carState);
 
 	// also send out the new server info
 	// request({
@@ -102,18 +191,17 @@ app.io.route('hello', function(req){
 	req.io.emit('car_state', carState);
 	req.io.emit('session_state', sessionState);
 
-	request({
-		uri: 'http://localhost:8999/INFO',
-		json: true
-	}).spread(function(res, info){
-		var iniPath = path.join(contentPath,info.track,'data','map.ini');
-		return iniparser.parse(iniPath,function(err, data){			
-			info.track_config = data.PARAMETERS;
-			req.io.emit('info',info);
-		});
+	getInfo().then(function(info){
+		// var iniPath = path.join(contentPath,info.track,'data','map.ini');
+		// return iniparser.parse(iniPath,function(err, data){			
+		// 	info.track_config = _.mapValues(data.PARAMETERS, function(val){
+		// 		return val*1;
+		// 	});
+		// 	req.io.emit('info',info);
+		// });
 		// return fs.readJsonAsync('./cfg/tracks/' + info.track + '.json').then(function(config){
 		// 	info.track_config = config;
-		// 	req.io.emit('info', info);
+			req.io.emit('info', info);
 		// });
 	});
 });

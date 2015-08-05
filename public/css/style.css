@@ -1,0 +1,26 @@
+		.trackmap {
+			position: relative;
+			background: #ccc;			
+		}
+		.trackmap img {
+			position: relative;
+			z-index: 1;
+
+			-webkit-filter: invert(100%);
+			-moz-filter: invert(100%);
+			-o-filter: invert(100%);
+			-ms-filter: invert(100%);
+		}
+		.car {
+			position:  absolute;
+			background: red;
+			width: 10px;
+			height: 10px;
+			border-radius: 10px;
+			z-index: 5;
+			margin-left: -5px;
+			margin-top: -5px;
+		}
+		.leaderboard{
+			background: red;
+		}

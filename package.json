@@ -17,13 +17,15 @@
   },
   "homepage": "https://github.com/flamescape/ac-website#readme",
   "dependencies": {
-    "acsp": "0.0.7",
+    "acsp": "",
     "bluebird": "^2.9.34",
+    "date-utils": "^1.2.17",
     "debug": "^2.2.0",
     "express.io": "^1.1.13",
     "fs-extra-promise": "^0.2.0",
     "iniparser": "^1.0.5",
     "lodash": "^3.10.0",
+    "memoizee": "^0.3.9",
     "request": "^2.60.0"
   }
 }
