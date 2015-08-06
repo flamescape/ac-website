@@ -1,26 +1,83 @@
-		.trackmap {
-			position: relative;
-			background: #ccc;			
-		}
-		.trackmap img {
-			position: relative;
-			z-index: 1;
+body{	
+}
+.content{
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	border: medium solid #bd0000;	
+	height: 100%;
+	background-color: #bd0000;
+}
+.header{
+	background: white;
+	text-decoration-color: red;
+	padding: 10px;
+	text-align: center;
+}
+.session_info{
+	background: #bd0000;
+	padding: 10px;	
+	
+}
+.session_info table{
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;	
+	table-layout: fixed;
+}
+.session_info td{	 
+	 text-align: center;
+	 font-weight: bold;
+}
 
-			-webkit-filter: invert(100%);
-			-moz-filter: invert(100%);
-			-o-filter: invert(100%);
-			-ms-filter: invert(100%);
-		}
-		.car {
-			position:  absolute;
-			background: red;
-			width: 10px;
-			height: 10px;
-			border-radius: 10px;
-			z-index: 5;
-			margin-left: -5px;
-			margin-top: -5px;
-		}
-		.leaderboard{
-			background: red;
-		}
+.trackmap{
+	padding: 10px;
+	background: white;
+}
+
+
+.trackmap_map_area {
+	position: relative;
+	background: white;		
+	width: 900px;		
+}
+.trackmap_map_area  img {
+	position: relative;
+	z-index: 1;
+
+	width: 900px;
+
+	-webkit-filter: invert(100%);
+	-moz-filter: invert(100%);
+	-o-filter: invert(100%);
+	-ms-filter: invert(100%);
+}
+.car {
+	position:  absolute;
+	background: #bd0000;
+	width: 10px;
+	height: 10px;
+	border-radius: 10px;
+	z-index: 5;
+	margin-left: -5px;
+	margin-top: -5px;
+}
+.leaderboard{
+	background: #bd0000;	
+	padding: 10px;	
+}
+
+.leaderboard table {
+	margin-left: -10px;
+	width: 1000px;
+	border-collapse: collapse;	
+	table-layout: fixed;
+	z-index: 1;
+}
+.leaderboard td, th{
+	text-align: center;	
+}
+
+.leaderboard tr:nth-child(odd) {
+  background: gray;
+}

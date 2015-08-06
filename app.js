@@ -14,9 +14,6 @@ var app = express().http().io();
 
 var carState = [];
 
-
-var sessionState = {};
-
 var welcomeMessage = "Please visit our website: kiba.tv"
 
 var contentPath = "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks";
@@ -46,8 +43,8 @@ var infoRequest = memoize(function infoRequest() {
 		json: true
 	}).spread(function(res, info){
 		info.end_time = (new Date()).add({seconds: info.timeleft});
-		
-		var iniPath = path.join(contentPath,info.track,'data/map.ini');
+		var trackPath =info.track.replace(/-/g, '/');
+		var iniPath = path.join(contentPath,trackPath,'data/map.ini');
 		return parseIni(iniPath).then(function(data){
 			info.track_config = _.mapValues(data.PARAMETERS, function(val){
 				return val*1;
@@ -67,7 +64,8 @@ function initCar(car_id) {
 	carState[car_id] = {
 		bestLap: Infinity,
 		lastLap: Infinity,
-		laps: 0
+		laps: 0,
+		is_connected: false
 	};
 }
 
@@ -111,10 +109,14 @@ a.on('is_connected',function(car_id){
 	carState[car_id].is_connected = true;
 	debug('Welcome Message to:', car_id);
 	a.sendChat(car_id,welcomeMessage);
+	app.io.broadcast('is_connected',car_id);
 });
 
 a.on('new_connection',function(clientinfo){
-	initCar(clientinfo.car_id);
+	// if the client is a new driver re init the car
+	if(clientinfo.driver_guid != carState[clientinfo.car_id].driver_guid){
+		initCar(clientinfo.car_id);
+	}	
 	_.extend(carState[clientinfo.car_id], clientinfo);
 	debug('NEW PLAYER', clientinfo);
 	

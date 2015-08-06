@@ -6,48 +6,57 @@
 
 </head>
 <body ng-controller="MainCtrl as mc">
-	<h1>Kiba.tv Assetto Corsa Server</h1>
-	<div class='session_info'>
-		<h2>Session info</h2>
-		<ul>
-			<li>Current Track: {{mc.acsp.info.track | propercase}}</li>
-			<li>Current Session: {{mc.acsp.sessionState.name}}</li>
-			<li ng-hide='mc.acsp.sessionState.name == "Race"'>Time Remaining: {{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</li>
-			<li ng-hide='mc.acsp.sessionState.name != "Race"'>Laps Remaining: {{mc.acsp.sessionState.laps - mc.leaderLap()}}</li>
-		</ul>
+<div class='content'>
+	<div class="header">
+		<h1>Kiba.tv Assetto Corsa Server</h1>
 	</div>
-
-	<div class="trackmap">		
-		<img ng-src="/tracks/{{mc.acsp.info.track}}" />
-		<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>
+	<div class='session_info'>
+		<table>
+			<tr>
+				<td>Current Track: {{mc.acsp.info.track | propercase}}</td>
+				<td>Current Session: {{mc.acsp.sessionState.name}}</td>
+				<td ng-hide='mc.acsp.sessionState.name == "Race"'>Time Remaining: {{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</td>
+				<td ng-hide='mc.acsp.sessionState.name != "Race"'>Laps Remaining: {{mc.acsp.sessionState.laps - mc.leaderLap()}}</td>
+				<td>Current Players: {{mc.acsp.state | connected_clients}}</td>
+			</tr>
+		</table>
+	</div>
+	<div class="trackmap">
+		<div class="trackmap_map_area">		
+			<img ng-src="/tracks/{{mc.acsp.info.track}}" />
+			<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>			
+		</div>
 		<h2>Real-Time trackmap</h2>
 	</div>
 
 	<div class="leaderboard">
-		<h2>Leaderboard</h1>
-
+		<h2>Scoreboard</h2>
 		<table>
 			<tr>
+				<th></th>
 				<th>Pos.</th>
 				<th>Name</td>
 				<th>Car</td>
 				<th>Best Lap</td>
 				<th>Last Lap</th>
 				<th>Laps</td>
+				<th></th>
 			</tr>
 			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction">
-				<td>{{$index + 1}}</td>
-				<td>{{c.driver_name}}</td>
-				<td>{{c.car_model}}</td>
+				<td></td>
+				<th>{{$index + 1}}</th>
+				<td>{{c.driver_name || '-'}}</td>
+				<td>{{c.car_model || '-'}}</td>
 				<td>{{c.bestLap | toLapTime}}</td>
 				<td>{{c.lastLap | toLapTime}}</td>
-				<td>{{c.laps}}</td>
+				<td>{{c.laps || '-'}}</td>
+				<td></td>
 			</tr>
 		</table>	
 		<p ng-hide='mc.acsp'>No Players :-(</p>	
 	</div>
 
-	<div style="white-space: pre;">{{mc.acsp.info|json}}</div>
+<!-- 	<div style="white-space: pre;">{{mc.acsp.info|json}}</div>
 
 	<div style="background:green;padding:10px;white-space:pre;">
 		<div>{{mc.acsp.sessionState|json}}</div>
@@ -56,8 +65,8 @@
 
 	<div style="background:yellow;padding:10px;white-space:pre;">
 		<div ng-repeat="c in mc.acsp.state">{{c|json}}</div>
-	</div>
-
+	</div> -->
+</div>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>
 	<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js'></script>

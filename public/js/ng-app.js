@@ -18,9 +18,14 @@ angular.module('app', [])
 		});
 
 		io.on('new_connection',function(client_info){
-			acsp.state[client_info.car_id] = client_info;
+			acsp.state[client_info.car_id] = client_info;			
 			$rootScope.$apply();
 		});
+
+		io.on('is_connected',function(car_id){
+			acsp.state[car_id].is_connected = true;
+			$rootScope.$apply();
+		})
 
 		io.on('car_update', function(car_update){
 			_.extend(acsp.state[car_update.car_id], car_update);
@@ -29,8 +34,7 @@ angular.module('app', [])
 		});
 
 		io.on('session_state', function(session_state){
-			acsp.sessionState = session_state;
-			console.log(session_state.type)
+			acsp.sessionState = session_state;			
 			// // if not in a race, reset the timer
 			// if(acsp.sessionState.type != 3){				
 			// 	acsp.info.timeleft = acsp.info.durations[acsp.sessionState.type - 1] * 60
@@ -43,11 +47,11 @@ angular.module('app', [])
 			// 	car.laps = 0;
 			// 	return car;
 			// });
-			// $rootScope.$apply();
+			$rootScope.$apply();
 		})
 
 		io.on('connection_closed',function(clientinfo){
-			acsp.state[clientinfo.car_id].connected = false;
+			acsp.state[clientinfo.car_id].is_connected = false;
 			$rootScope.$apply();
 		});
 
@@ -61,7 +65,7 @@ angular.module('app', [])
 			$rootScope.$apply();
 		});
 
-		acsp.state = [];
+		// acsp.state = [];
 		// for (var i = 0; i < 4; i++) {
 		// 	acsp.state[i] = {};
 		// }
@@ -99,6 +103,13 @@ angular.module('app', [])
 			return text.substr(0,1).toUpperCase() + text.substr(1).toLowerCase();
 		};
 	})
+	.filter('connected_clients',function(){
+		return function(clients){
+			return clients.filter(function(client){
+				return client.is_connected;
+			}).length;
+		};
+	})
 
 	.controller('MainCtrl', function(acsp){
 		this.acsp = acsp;		
@@ -108,15 +119,16 @@ angular.module('app', [])
 
 			if(!car.pos) return {display: 'none'};
 
-			var x = ((car.pos.x + a.X_OFFSET) / a.SCALE_FACTOR);
-			var y = ((car.pos.z + a.Z_OFFSET) / a.SCALE_FACTOR);
+			var img_scale_factor = 900 / a.WIDTH;
+
+			var x = ((car.pos.x + a.X_OFFSET) / a.SCALE_FACTOR) * img_scale_factor;
+			var y = ((car.pos.z + a.Z_OFFSET) / a.SCALE_FACTOR) * img_scale_factor;
 
 			return {
 				top: y +'px',
 				left: x +'px'
 			}
 		};
-
 		this.orderFunction = function(car){
 			var session = acsp.sessionState.type;
 			// if in race
