@@ -136,11 +136,7 @@ a.on('lap_completed',function(clientinfo){
 			carState[clientinfo.car_id].bestLap = clientinfo.laptime;
 		}
 	}
-	clientinfo.leaderboard.forEach(function(l){
-		if (!carState[l.rcar_id]) return;
-		carState[l.rcar_id].rtime = l.rtime;
-		carState[l.rcar_id].rlaps = l.rlaps;
-	});
+	carState[clientinfo.car_id].leaderboard = clientinfo.leaderboard;
 	sessionState.grip_level = clientinfo.grip_level;
 	app.io.broadcast('car_state', carState);
 });

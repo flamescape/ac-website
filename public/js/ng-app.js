@@ -117,10 +117,17 @@ angular.module('app', [])
 	.controller('MainCtrl', function(acsp){
 		this.acsp = acsp;	
 
+		this.selectedCar = null;
 		this.getCarInfo = function(car_id){
-			$scope.getPartial = function(){
-				return 'partials/car_info.html'
+			if (this.selectedCar === car_id) {
+				this.selectedCar = null;
+			} else {
+				this.selectedCar = car_id;
 			}
+
+			// $scope.getPartial = function(){
+			// 	return 'partials/car_info.html'
+			// }
 		}	
 
 		this.map2map = function(car){
@@ -128,15 +135,22 @@ angular.module('app', [])
 
 			if(!car.pos) return {display: 'none'};
 
-			var img_scale_factor = 900 / a.WIDTH;
+			var img_scale_factor = 250 / a.WIDTH;
 
 			var x = ((car.pos.x + a.X_OFFSET) / a.SCALE_FACTOR) * img_scale_factor;
 			var y = ((car.pos.z + a.Z_OFFSET) / a.SCALE_FACTOR) * img_scale_factor;
 
-			return {
+			var style = {
 				top: y +'px',
 				left: x +'px'
+			};
+
+			if (this.selectedCar == car.car_id) {
+				style.background = 'blue';
+				style['z-index'] = 10;
 			}
+
+			return style;
 		};
 		this.orderFunction = function(car){
 			var session = acsp.sessionState.type;

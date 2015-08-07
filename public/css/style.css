@@ -1,22 +1,20 @@
-body{
-	background-color: black;	
+body{		
+	font-family: 'Open Sans', Helvetica, sans-serif;
+	font-weight: 700;
+	color: white;
 }
 .content{
 	width: 910px;
 	margin-left: auto;
-	margin-right: auto;
-	border: medium solid #bd0000;	
-	height: 100%;
-	background-color: #bd0000;
+	margin-right: auto;		
+	overflow: auto;
+	background: #242424;
 }
 .header{
-	background-color: black;
-	color: #bd0000;	
 	padding: 10px;
 	text-align: center;
 }
-.session_info{
-	background: #bd0000;
+.session_info{	
 	padding: 10px;	
 }
 .session_info table{
@@ -32,21 +30,20 @@ body{
 
 .trackmap{
 	padding: 5px;
-	background-color: black;
-	color: #bd0000;
+	color: #323232;
+	font-weight: 400;
+	float: left;
 }
 
 
 .trackmap_map_area {
 	position: relative;
-	background-color:green;
-	width: 900px;		
+	width: 250px;		
 }
-.trackmap_map_area  img {
+.trackmap_map_area img {
 	position: relative;
 	z-index: 1;
-
-	width: 900px;	
+	width: 250px;	
 }
 .car {
 	position:  absolute;
@@ -59,29 +56,35 @@ body{
 	margin-top: -5px;
 }
 .leaderboard{
-	background: #bd0000;	
+	background: #242424;	
 	padding: 10px;	
+	color: white;
+	float: left
+}
+.leaderboar p{
+	font-weight: 400;
 }
 
-.leaderboard table {
-	margin-left: -10px;
-	width: 910px;
+.leaderboard table {		
 	border-collapse: collapse;	
 	table-layout: fixed;
 	z-index: 1;
+	color: white;
 }
 .leaderboard td, th{
-	text-align: center;	
+	text-align: left;	
 }
 .leaderboard thead tr{
-	background: black;
-	color: #bd0000;
+	background: #323232;	
 }
 
 .leaderboard tbody tr:nth-child(even) {
-  background: black;
-  color: #bd0000;
+  background: #323232;
+  color: white;
+}
+.leaderboard tbody th {
+	color: rgb(20,190,150);
 }
 .leaderboard tbody tr:hover{
-	background: yellow;
+	background: rgb(80,80,80);
 }

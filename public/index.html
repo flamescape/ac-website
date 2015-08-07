@@ -2,8 +2,8 @@
 <html ng-app="app">
 <head>
 	<title>AC-Website</title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
 	<link rel='stylesheet' type="text/css" href="css/style.css"></style>
-
 </head>
 <body ng-controller="MainCtrl as mc">
 <div class='content'>
@@ -11,6 +11,9 @@
 		<h1>Kiba.tv Assetto Corsa Server</h1>
 	</div>
 	<div class='session_info'>
+		<h2>{{mc.acsp.sessionState.name}}</h2>
+		<p ng-hide='mc.acsp.sessionState.name == "Race"'>{{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</p>
+		<p ng-hide='mc.acsp.sessionState.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.sessionState.laps}}</p>
 		<table>
 			<tr>
 				<td>Current Track: {{mc.acsp.info.track | propercase}}</td>
@@ -22,36 +25,35 @@
 		</table>
 	</div>
 	<div class="trackmap">
+		{{mc.acsp.info.track | propercase}}
 		<div class="trackmap_map_area">		
 			<img ng-src="/tracks/{{mc.acsp.info.track}}" />
 			<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>			
 		</div>
 	</div>
 	<div class="leaderboard">
-		<h2>Scoreboard</h2>
+		<p>Live timing</p>		
 		<table>
 		<thead>
-			<tr>
-				<th></th>
+			<tr>				
 				<th>Pos.</th>
+				<th>#</th>
 				<th>Name</td>
 				<th>Car</td>
 				<th>Best Lap</td>
 				<th>Last Lap</th>
-				<th>Laps</td>
-				<th></th>
+				<th>Laps</td>				
 			</tr>
 		</thead>
 		</tbody>
-			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction" onclick="mc.getCarInfo(c.car_id)" ng-if="c.is_connected">
-				<td></td>
+			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction" ng-click="mc.getCarInfo(c.car_id)" ng-if="c.is_connected">				
 				<th>{{$index + 1}}</th>
+				<td>IMG</td>
 				<td>{{c.driver_name || '-'}}</td>
 				<td>{{c.car_model || '-'}}</td>
 				<td>{{c.bestLap | toLapTime}}</td>
 				<td>{{c.lastLap | toLapTime}}</td>
 				<td>{{c.laps || '-'}}</td>
-				<td></td>
 			</tr>
 			<tr ng-if="(mc.acsp.state | connected_clients) == 0">
 				<td colspan="9">:-(</td>
