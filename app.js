@@ -151,24 +151,12 @@ a.on('new_session',function(sessioninfo){
 	sessionState.ended = false;
 	app.io.broadcast('session_state',sessioninfo);
 
-	// Then clear all the laptimes for the next session
-	carState.map(function(car){
-		car.bestLap = 0;
-		car.lastLap = 0;
-		car.laps = 0;
-		return car;
-	});
-
 	app.io.broadcast('car_state', carState);
 
-	// also send out the new server info
-	// request({
-	// 	uri: 'http://localhost:8999/INFO',
-	// 	json: true
-	// }).spread(function(res, body){
-	// 	req.io.emit('info', body);		
-	// })
 
+	getInfo().then(function(info){
+		app.io.broadcast('info', info);
+	});
 });
 
 a.on('collide_car',function(clientinfo){

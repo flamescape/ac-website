@@ -26,12 +26,11 @@
 			<img ng-src="/tracks/{{mc.acsp.info.track}}" />
 			<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>			
 		</div>
-		<h2>Real-Time trackmap</h2>
 	</div>
-
 	<div class="leaderboard">
 		<h2>Scoreboard</h2>
 		<table>
+		<thead>
 			<tr>
 				<th></th>
 				<th>Pos.</th>
@@ -42,7 +41,9 @@
 				<th>Laps</td>
 				<th></th>
 			</tr>
-			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction">
+		</thead>
+		</tbody>
+			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction" onclick="mc.getCarInfo(c.car_id)" ng-if="c.is_connected">
 				<td></td>
 				<th>{{$index + 1}}</th>
 				<td>{{c.driver_name || '-'}}</td>
@@ -52,6 +53,10 @@
 				<td>{{c.laps || '-'}}</td>
 				<td></td>
 			</tr>
+			<tr ng-if="(mc.acsp.state | connected_clients) == 0">
+				<td colspan="9">:-(</td>
+			</tr>
+		</tbody>
 		</table>	
 		<p ng-hide='mc.acsp'>No Players :-(</p>	
 	</div>

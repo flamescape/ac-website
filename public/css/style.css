@@ -1,7 +1,8 @@
-body{	
+body{
+	background-color: black;	
 }
 .content{
-	width: 1000px;
+	width: 910px;
 	margin-left: auto;
 	margin-right: auto;
 	border: medium solid #bd0000;	
@@ -9,15 +10,14 @@ body{
 	background-color: #bd0000;
 }
 .header{
-	background: white;
-	text-decoration-color: red;
+	background-color: black;
+	color: #bd0000;	
 	padding: 10px;
 	text-align: center;
 }
 .session_info{
 	background: #bd0000;
 	padding: 10px;	
-	
 }
 .session_info table{
 	margin-left: auto;
@@ -31,26 +31,22 @@ body{
 }
 
 .trackmap{
-	padding: 10px;
-	background: white;
+	padding: 5px;
+	background-color: black;
+	color: #bd0000;
 }
 
 
 .trackmap_map_area {
 	position: relative;
-	background: white;		
+	background-color:green;
 	width: 900px;		
 }
 .trackmap_map_area  img {
 	position: relative;
 	z-index: 1;
 
-	width: 900px;
-
-	-webkit-filter: invert(100%);
-	-moz-filter: invert(100%);
-	-o-filter: invert(100%);
-	-ms-filter: invert(100%);
+	width: 900px;	
 }
 .car {
 	position:  absolute;
@@ -69,7 +65,7 @@ body{
 
 .leaderboard table {
 	margin-left: -10px;
-	width: 1000px;
+	width: 910px;
 	border-collapse: collapse;	
 	table-layout: fixed;
 	z-index: 1;
@@ -77,7 +73,15 @@ body{
 .leaderboard td, th{
 	text-align: center;	
 }
+.leaderboard thead tr{
+	background: black;
+	color: #bd0000;
+}
 
-.leaderboard tr:nth-child(odd) {
-  background: gray;
+.leaderboard tbody tr:nth-child(even) {
+  background: black;
+  color: #bd0000;
+}
+.leaderboard tbody tr:hover{
+	background: yellow;
 }

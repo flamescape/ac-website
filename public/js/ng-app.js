@@ -4,7 +4,7 @@ angular.module('app', [])
 
 	})
 
-	.factory('acsp', function($window, $rootScope){
+	.factory('acsp', function($window, $rootScope, $interval){
 		var acsp = {};
 		var io = $window.io.connect();
 
@@ -34,7 +34,9 @@ angular.module('app', [])
 		});
 
 		io.on('session_state', function(session_state){
-			acsp.sessionState = session_state;			
+			acsp.sessionState = session_state;
+
+			// start the session timer								
 			// // if not in a race, reset the timer
 			// if(acsp.sessionState.type != 3){				
 			// 	acsp.info.timeleft = acsp.info.durations[acsp.sessionState.type - 1] * 60
@@ -57,13 +59,14 @@ angular.module('app', [])
 
 		io.on('info', function(info){			
 			acsp.info = info;
-			// start the session timer			
-			setInterval(function(){
-				acsp.info.timeleft -= 1;
-				$rootScope.$apply();
-			},1000)						
 			$rootScope.$apply();
+			// start the session timer			
+			// startTimer();
 		});
+
+		$interval(function(){
+			acsp.info.timeleft -= 1;				
+		}, 1000);
 
 		// acsp.state = [];
 		// for (var i = 0; i < 4; i++) {
@@ -112,7 +115,13 @@ angular.module('app', [])
 	})
 
 	.controller('MainCtrl', function(acsp){
-		this.acsp = acsp;		
+		this.acsp = acsp;	
+
+		this.getCarInfo = function(car_id){
+			$scope.getPartial = function(){
+				return 'partials/car_info.html'
+			}
+		}	
 
 		this.map2map = function(car){
 			var a = acsp.info.track_config;	
