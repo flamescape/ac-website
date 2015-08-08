@@ -10,33 +10,29 @@
 	<div class="header">
 		<h1>Kiba.tv Assetto Corsa Server</h1>
 	</div>
-	<div class='session_info'>
-		<h2>{{mc.acsp.sessionState.name}}</h2>
-		<p ng-hide='mc.acsp.sessionState.name == "Race"'>{{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</p>
-		<p ng-hide='mc.acsp.sessionState.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.sessionState.laps}}</p>
-		<table>
-			<tr>
-				<td>Current Track: {{mc.acsp.info.track | propercase}}</td>
-				<td>Current Session: {{mc.acsp.sessionState.name}}</td>
-				<td ng-hide='mc.acsp.sessionState.name == "Race"'>Time Remaining: {{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</td>
-				<td ng-hide='mc.acsp.sessionState.name != "Race"'>Laps Remaining: {{mc.acsp.sessionState.laps - mc.leaderLap()}}</td>
-				<td>Current Players: {{mc.acsp.state | connected_clients}}</td>
-			</tr>
-		</table>
+	<div class="subheader">
+		<div class='session_info'>
+			<p>{{mc.acsp.sessionState.name}}</p>
+			<span ng-hide='mc.acsp.sessionState.name == "Race"'>{{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</span>
+			<span ng-hide='mc.acsp.sessionState.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.sessionState.laps}}</span>
+		</div>	
+		<div class="server_info">
+			<span>{{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}}</span>
+		</div>
 	</div>
 	<div class="trackmap">
-		{{mc.acsp.info.track | propercase}}
+		<span>{{mc.acsp.info.track | propercase}}</span>
 		<div class="trackmap_map_area">		
 			<img ng-src="/tracks/{{mc.acsp.info.track}}" />
 			<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>			
 		</div>
 	</div>
 	<div class="leaderboard">
-		<p>Live timing</p>		
+		<span>Live timing</span>		
 		<table>
 		<thead>
 			<tr>				
-				<th>Pos.</th>
+				<th>P</th>
 				<th>#</th>
 				<th>Name</td>
 				<th>Car</td>
@@ -46,7 +42,7 @@
 			</tr>
 		</thead>
 		</tbody>
-			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction" ng-click="mc.getCarInfo(c.car_id)" ng-if="c.is_connected">				
+			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction" ng-click="mc.getCarInfo(c.car_id)">				
 				<th>{{$index + 1}}</th>
 				<td>IMG</td>
 				<td>{{c.driver_name || '-'}}</td>
@@ -55,24 +51,9 @@
 				<td>{{c.lastLap | toLapTime}}</td>
 				<td>{{c.laps || '-'}}</td>
 			</tr>
-			<tr ng-if="(mc.acsp.state | connected_clients) == 0">
-				<td colspan="9">:-(</td>
-			</tr>
 		</tbody>
-		</table>	
-		<p ng-hide='mc.acsp'>No Players :-(</p>	
+		</table>			
 	</div>
-
-<!-- 	<div style="white-space: pre;">{{mc.acsp.info|json}}</div>
-
-	<div style="background:green;padding:10px;white-space:pre;">
-		<div>{{mc.acsp.sessionState|json}}</div>
-	</div>
-
-
-	<div style="background:yellow;padding:10px;white-space:pre;">
-		<div ng-repeat="c in mc.acsp.state">{{c|json}}</div>
-	</div> -->
 </div>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>

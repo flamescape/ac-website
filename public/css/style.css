@@ -4,38 +4,36 @@ body{
 	color: white;
 }
 .content{
-	width: 910px;
-	margin-left: auto;
-	margin-right: auto;		
+	/*margin-left: auto;
+	margin-right: auto;	*/	
 	overflow: auto;
 	background: #242424;
 }
-.header{
-	padding: 10px;
+.subheader{
+	width: 100%;
+	height: 75px;
+	background: #323232;	
+}
+.subheader span{
+	color: gray;
+}
+.header{	
 	text-align: center;
 }
-.session_info{	
-	padding: 10px;	
+.session_info{			
+	float: left;
 }
-.session_info table{
-	margin-left: auto;
-	margin-right: auto;
-	width: 90%;	
-	table-layout: fixed;
-}
-.session_info td{	 
-	 text-align: center;
-	 font-weight: bold;
+.server_info{
+	float: right;	
+	margin-right: 10px;
 }
 
 .trackmap{
 	padding: 5px;
-	color: #323232;
+	color: gray;
 	font-weight: 400;
 	float: left;
 }
-
-
 .trackmap_map_area {
 	position: relative;
 	width: 250px;		
@@ -55,13 +53,14 @@ body{
 	margin-left: -5px;
 	margin-top: -5px;
 }
-.leaderboard{
-	background: #242424;	
+.leaderboard{		
 	padding: 10px;	
 	color: white;
-	float: left
+	float: left;	
+	width: 80%;
+	background: 
 }
-.leaderboar p{
+.leaderboard span{
 	font-weight: 400;
 }
 
@@ -70,15 +69,16 @@ body{
 	table-layout: fixed;
 	z-index: 1;
 	color: white;
+	width: 100%;
 }
 .leaderboard td, th{
 	text-align: left;	
 }
-.leaderboard thead tr{
-	background: #323232;	
+.leaderboard thead tr{	
+	color: gray;	
 }
 
-.leaderboard tbody tr:nth-child(even) {
+.leaderboard tbody tr:nth-child(odd) {
   background: #323232;
   color: white;
 }
