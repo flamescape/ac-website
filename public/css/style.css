@@ -20,13 +20,6 @@ body{
 .header{	
 	text-align: center;
 }
-.session_info{			
-	float: left;
-}
-.server_info{
-	float: right;	
-	margin-right: 10px;
-}
 
 .trackmap{
 	padding: 5px;
@@ -35,6 +28,8 @@ body{
 	float: left;
 }
 .trackmap_map_area {
+	margin-left: auto;
+	margin-right: auto;
 	position: relative;
 	width: 250px;		
 }
@@ -42,6 +37,7 @@ body{
 	position: relative;
 	z-index: 1;
 	width: 250px;	
+	-webkit-filter: brightness(0.5);
 }
 .car {
 	position:  absolute;
@@ -58,7 +54,6 @@ body{
 	color: white;
 	float: left;	
 	width: 80%;
-	background: 
 }
 .leaderboard span{
 	font-weight: 400;
@@ -87,4 +82,18 @@ body{
 }
 .leaderboard tbody tr:hover{
 	background: rgb(80,80,80);
+}
+
+@media only screen and (max-width: 1000px) {
+	.trackmap{		
+		float: none;
+	}
+
+  .leaderboard {
+  	margin-left: auto;
+		margin-right: auto;
+    width: 95%;
+    float: none;
+  }
+
 }

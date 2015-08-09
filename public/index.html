@@ -20,11 +20,11 @@
 			<span>{{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}}</span>
 		</div>
 	</div>
-	<div class="trackmap">
-		<span>{{mc.acsp.info.track | propercase}}</span>
+	<div class="trackmap">		
 		<div class="trackmap_map_area">		
 			<img ng-src="/tracks/{{mc.acsp.info.track}}" />
 			<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>			
+			<span>{{mc.acsp.info.track | propercase}}</span>
 		</div>
 	</div>
 	<div class="leaderboard">
