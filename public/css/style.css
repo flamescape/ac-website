@@ -20,12 +20,18 @@ body{
 .header{	
 	text-align: center;
 }
+.container{
+	width: 100%;
+	display: table;
+}
 
 .trackmap{
 	padding: 5px;
 	color: gray;
-	font-weight: 400;
-	float: left;
+	font-weight: 400;	
+	display:table-cell;
+	vertical-align: middle;
+	text-align: center;
 }
 .trackmap_map_area {
 	margin-left: auto;
@@ -51,9 +57,8 @@ body{
 }
 .leaderboard{		
 	padding: 10px;	
-	color: white;
-	float: left;	
-	width: 80%;
+	color: white;		
+	display:table-cell;
 }
 .leaderboard span{
 	font-weight: 400;
@@ -87,13 +92,14 @@ body{
 @media only screen and (max-width: 1000px) {
 	.trackmap{		
 		float: none;
+		display: block;
 	}
 
   .leaderboard {
   	margin-left: auto;
-		margin-right: auto;
-    width: 95%;
+	margin-right: auto;    
     float: none;
+    display: block;
   }
 
 }
