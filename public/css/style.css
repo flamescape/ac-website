@@ -2,6 +2,7 @@ body{
 	font-family: 'Open Sans', Helvetica, sans-serif;
 	font-weight: 700;
 	color: white;
+	background: #242424;
 }
 .content{
 	/*margin-left: auto;
@@ -11,12 +12,26 @@ body{
 }
 .subheader{
 	width: 100%;
-	height: 75px;
 	background: #323232;	
 }
-.subheader span{
+.subheader table{	
+	table-layout: fixed;
+	width:100%;
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: right;
+}
+.subheader thead{
+	font-weight: 700;
+}
+.subheader tbody{
+	font-weight: 400;
 	color: gray;
 }
+.subheader td:first-child{
+	text-align: left;
+}
+
 .header{	
 	text-align: center;
 }
@@ -90,6 +105,9 @@ body{
 }
 
 @media only screen and (max-width: 1000px) {
+	.subheader table{
+		margin-left: auto;
+	}
 	.trackmap{		
 		float: none;
 		display: block;

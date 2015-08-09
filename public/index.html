@@ -12,13 +12,25 @@
 	</div>
 	<div class="subheader">
 		<div class='session_info'>
-			<p>{{mc.acsp.sessionState.name}}</p>
-			<span ng-hide='mc.acsp.sessionState.name == "Race"'>{{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</span>
-			<span ng-hide='mc.acsp.sessionState.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.sessionState.laps}}</span>
+		<table>
+			<thead>
+			<tr>
+				<td>{{mc.acsp.sessionState.name}}</td>
+				<td>{{mc.acsp.info.ui.description}}, {{mc.acsp.info.ui.country}}</td>
+				<td>{{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}}</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td><span ng-hide='mc.acsp.sessionState.name == "Race"'>{{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</span>
+					<span ng-hide='mc.acsp.sessionState.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.sessionState.laps}}</span>
+				</td>
+				<td>{{mc.acsp.info.ui.length}}m</td>
+				<td></td>
+			</tr>
+			</tbody>			
+		</table>			
 		</div>	
-		<div class="server_info">
-			<span>{{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}}</span>
-		</div>
 	</div>
 	<div class="container">
 	<div class="trackmap">		
@@ -38,7 +50,7 @@
 				<th>Name</td>
 				<th>Car</td>
 				<th>Best Lap</td>
-				<th>Last Lap</th>
+				<th>Last Lap</th>				
 				<th>Laps</td>				
 			</tr>
 		</thead>
@@ -56,6 +68,9 @@
 		</table>			
 	</div>
 	</div>
+<!-- 	<footer>
+		<img src="C:/Users/bjorn/Desktop/acsp/ac-website/public/content/logo.png">
+	</footer> -->
 </div>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>
