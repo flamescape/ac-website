@@ -25,7 +25,7 @@
 		<div class="trackmap_map_area">		
 			<img ng-src="/tracks/{{mc.acsp.info.track}}" />
 			<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>			
-			<span>{{mc.acsp.info.track | propercase}}</span>
+			<span>{{mc.acsp.info.ui.name}}</span>
 		</div>
 	</div>
 	<div class="leaderboard">

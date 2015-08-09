@@ -50,6 +50,17 @@ var infoRequest = memoize(function infoRequest() {
 				return val*1;
 			});
 		}).return(info);
+	}).spread(function(res,info){
+		var trackPath = info.track.split(/-/g);
+		var infoPath = path.join(contentPath,trackPath[0],'ui/ui_track.json');
+		if(trackPath.length > 1){
+			infoPath = path.join(contentPath,trackPath[0],'ui',trackPath[1],'ui_track.json');
+		}
+		// read the JSON file!
+		return fs.readJsonAsync(infoPath).then(function(ui){
+			info.ui = ui;
+			return info;
+		});
 	})
 });
 
