@@ -9,8 +9,11 @@ var fs = require('fs-extra-promise');
 var parseIni = Promise.promisify(require('iniparser').parse);
 var memoize = require('memoizee');
 require('date-utils');
+Promise.longStackTraces();
 
 var app = express().http().io();
+
+
 
 var carState = [];
 
@@ -31,32 +34,21 @@ a.on('removeListener', function(){
 	debug('removed a listener, now have %s listeners', listeners);
 })
 
-// a.pollUntilStatusKnown(0).then(function(status){
-// 	debug('Car0 is connected:', status);
-// });
-
-
 var infoRequest = memoize(function infoRequest() {
 	console.log('DOING EXPENSIVE REQUEST');
 	return request({
 		uri: 'http://localhost:8999/INFO',
 		json: true
 	}).spread(function(res, info){
-		info.end_time = (new Date()).add({seconds: info.timeleft});
-		var trackPath =info.track.replace(/-/g, '/');
-		var iniPath = path.join(contentPath,trackPath,'data/map.ini');
+		info.end_time = (new Date()).add({seconds: info.timeleft});		
+		var iniPath = path.join(contentPath,getTrackFolder(info.track),'data/map.ini');
 		return parseIni(iniPath).then(function(data){
 			info.track_config = _.mapValues(data.PARAMETERS, function(val){
 				return val*1;
 			});
 		}).return(info);
-	}).spread(function(res,info){
-		var trackPath = info.track.split(/-/g);
-		var infoPath = path.join(contentPath,trackPath[0],'ui/ui_track.json');
-		if(trackPath.length > 1){
-			infoPath = path.join(contentPath,trackPath[0],'ui',trackPath[1],'ui_track.json');
-		}
-		// read the JSON file!
+	}).then(function(info){
+		var infoPath = path.join(contentPath,getTrackUiFolder(info.track),'ui_track.json');
 		return fs.readJsonAsync(infoPath).then(function(ui){
 			info.ui = ui;
 			return info;
@@ -78,6 +70,18 @@ function initCar(car_id) {
 		laps: 0,
 		is_connected: false
 	};
+}
+
+function getTrackFolder(trackName){	
+	var trackPath = path.join(contentPath,trackName.toString());	
+	if(fs.existsSync(trackPath)){ return trackName.toString(); }
+	else{ return trackName.replace(/-/g, '/'); }
+}
+function getTrackUiFolder(trackName){	
+	var trackPath = path.join(contentPath,trackName.toString(),'ui');	
+	if(fs.existsSync(trackPath)){ return path.join(trackName.toString(),'ui'); }
+	var track = trackName.split(/-/g);
+	return path.join(track[0],'ui',track[1]);
 }
 
 
@@ -179,9 +183,9 @@ a.on('end_session',function(){
 	sessionState.ended = true;
 	app.io.broadcast('session_state',sessionState);
 	// TODO: store all the laptimes
-	carState = carState.filter(function(car){
-		return car.connected;
-	});
+	// carState = carState.filter(function(car){
+	// 	return car.connected;
+	// });
 });
 
 app.io.route('hello', function(req){
@@ -205,13 +209,12 @@ app.io.route('hello', function(req){
 
 app.io.route('new_session_info',function(req){
 	req.io.emit('session_state', sessionState);
-
 });
 
 app.use(express.static(path.join(__dirname, './public')));
 
 app.get('/tracks/:id', function(req, res){
-	var trackPath = req.params.id.replace(/-/g, '/');
+	var trackPath = getTrackFolder(req.params.id);
 	var mapPath = path.join(contentPath, trackPath, 'map.png');
 	fs.existsAsync(mapPath).then(function(exists){
 		if (!exists) throw Error('File not found');
