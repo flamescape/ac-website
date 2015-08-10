@@ -20,7 +20,7 @@ angular.module('app', [])
 	        $rootScope.$apply();
 	    });
 	    io.on('car_state', function (car_state) {
-            // if the car does not exist yet, initialize it
+	        // if the car does not exist yet, initialize it
 	        if (!acsp.car_state[car_state.car_id]) {
 	            acsp.car_state[car_state.car_id] = {};
 	        }
@@ -63,7 +63,7 @@ angular.module('app', [])
 	            this.selectedCar = null;
 	        } else {
 	            this.selectedCar = car_id;
-	        }	       
+	        }
 	    }
 
 	    this.map2map = function (car) {
@@ -113,5 +113,4 @@ angular.module('app', [])
 	        return _.max(_.pluck(acsp.sessionState.leaderboard, 'rlaps')) | 0;
 	    }
 	})
-
 ;

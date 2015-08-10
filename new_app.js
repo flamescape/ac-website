@@ -29,27 +29,19 @@ a.enableRealtimeReport(50);
 // SESSION EVENTS
 
 a.on('session_info',function(sessioninfo){
+    // reenable rt report, just in case
+    a.enableRealtimeReport(50);
     // extend the sessionState with the new info
     _.extend(sessionState,sessioninfo);		
     // broadcast the new sesionState
     // app.io.broadcast('session_state',sessionState);
     // the track is now known, so request the map.ini and the ui_track.json	
+    // TODO: We should do this only once, is memoize enough?
     getInfo().then(function(info){
         // once we get that broadcast the new sessionState
         sessionState.info = info;
         app.io.broadcast('session_state',sessionState);
     });
-});
-
-a.on('new_session',function(sessioninfo){
-    // reenable rt report, just in case
-    a.enableRealtimeReport(50);
-    // extend the session state with the new info
-    _.extend(sessionState,sessioninfo);
-    // if the session info has not been requested, request it again
-    if(!sessioninfo.track){ a.getSessionInfo(); }
-    // broadcast the new session state
-    app.io.broadcast('session_state',sessionState);	
 });
 
 a.on('end_session',function(resultsPath){

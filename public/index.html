@@ -15,18 +15,18 @@
 		<table>
 			<thead>
 			<tr>
-				<td>{{mc.acsp.sessionState.name}}</td>
-				<td>{{mc.acsp.info.ui.description}}, {{mc.acsp.info.ui.country}}</td>
-				<td>AIR: {{mc.acsp.sessionState.ambient_temp}}&deg;C <!-- {{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}} --></td>
+				<td>{{mc.acsp.session_state.name}}</td>
+				<td>{{mc.acsp.session_state.info.ui.description}}, {{mc.acsp.session_state.info.ui.country}}</td>
+				<td>AIR: {{mc.acsp.session_state.ambient_temp}}&deg;C <!-- {{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}} --></td>
 			</tr>
 			</thead>
 			<tbody>
 			<tr>
-				<td><span ng-hide='mc.acsp.sessionState.name == "Race"'>{{mc.acsp.info.timeleft*1000|toLapTime:'m:ss'}}</span>
-					<span ng-hide='mc.acsp.sessionState.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.sessionState.laps}}</span>
+				<td><span ng-hide='mc.acsp.session_state.name == "Race"'>{{mc.acsp.session_state.info.timeleft*1000|toLapTime:'m:ss'}}</span>
+					<span ng-hide='mc.acsp.session_state.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.session_state.laps}}</span>
 				</td>
-				<td>{{mc.acsp.info.ui.length}}m</td>
-				<td>TRACK: {{mc.acsp.sessionState.road_temp}}&deg;C</td>
+				<td>{{mc.acsp.session_state.info.ui.length}}m</td>
+				<td>TRACK: {{mc.acsp.session_state.road_temp}}&deg;C</td>
 			</tr>
 			</tbody>			
 		</table>			
@@ -35,9 +35,9 @@
 	<div class="container">
 	<div class="trackmap">		
 		<div class="trackmap_map_area">		
-			<img ng-src="/tracks/{{mc.acsp.info.track}}" />
-			<div ng-repeat="c in mc.acsp.state" class="car" ng-style="mc.map2map(c)"></div>			
-			<span>{{mc.acsp.info.ui.name}}</span>
+			<img ng-src="/tracks/{{mc.acsp.session_state.track}}/{{mc.acsp.session_state.track_config}}" />
+			<div ng-repeat="c in mc.acsp.car_state" class="car" ng-style="mc.map2map(c)"></div>			
+			<span>{{mc.acsp.session_state.info.ui.name}}</span>
 		</div>
 	</div>
 	<div class="leaderboard">
@@ -54,13 +54,13 @@
 			</tr>
 		</thead>
 		</tbody>
-			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction" ng-click="mc.getCarInfo(c.car_id)">				
+			<tr ng-repeat="c in mc.acsp.car_state | orderBy: mc.orderFunction" ng-click="mc.getCarInfo(c.car_id)">				
 				<th>{{$index + 1}}</th>				
 				<td>{{c.driver_name || '-'}}</td>
 				<td>{{c.car_model || '-'}}</td>
-				<td>{{c.bestLap | toLapTime}}</td>
-				<td>{{c.lastLap | toLapTime}}</td>
-				<td>{{c.laps || '-'}}</td>
+				<td><!-- {{c.bestLap | toLapTime}} --></td>
+				<td><!-- {{c.lastLap | toLapTime}} --></td>
+				<td><!-- {{c.laps || '-'}} --></td>
 			</tr>
 		</tbody>
 		</table>			
