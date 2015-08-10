@@ -22,7 +22,7 @@
 			</thead>
 			<tbody>
 			<tr>
-				<td><span ng-hide='mc.acsp.session_state.name == "Race"'>{{mc.acsp.session_state.info.timeleft*1000|toLapTime:'m:ss'}}</span>
+				<td><span ng-hide='mc.acsp.session_state.name == "Race"'><!-- {{mc.acsp.session_state.info.timeleft*1000|toLapTime:'m:ss'}} --></span>
 					<span ng-hide='mc.acsp.session_state.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.session_state.laps}}</span>
 				</td>
 				<td>{{mc.acsp.session_state.info.ui.length}}m</td>
@@ -58,9 +58,9 @@
 				<th>{{$index + 1}}</th>				
 				<td>{{c.driver_name || '-'}}</td>
 				<td>{{c.car_model || '-'}}</td>
-				<td><!-- {{c.bestLap | toLapTime}} --></td>
-				<td><!-- {{c.lastLap | toLapTime}} --></td>
-				<td><!-- {{c.laps || '-'}} --></td>
+				<td>{{c.laps | bestLap | toLapTime}}</td>
+				<td>{{c.laps[c.laps_completed].time | toLapTime}}</td>
+				<td>{{c.laps_completed || '-'}}</td>
 			</tr>
 		</tbody>
 		</table>			

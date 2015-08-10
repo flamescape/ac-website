@@ -14,6 +14,7 @@ var app = express().http().io();
 
 var carState = [];
 var sessionState = {};
+    sessionState.leaderboard = {};
 
 var welcomeMessage = "Please visit our website: kiba.tv"
 
@@ -28,9 +29,9 @@ a.enableRealtimeReport(50);
 
 // SESSION EVENTS
 
-a.on('session_info',function(sessioninfo){
+a.on('session_info',function(sessioninfo){    
     // reenable rt report, just in case
-    a.enableRealtimeReport(50);
+    //a.enableRealtimeReport(50);
     // extend the sessionState with the new info
     _.extend(sessionState,sessioninfo);		
     // broadcast the new sesionState
@@ -44,8 +45,16 @@ a.on('session_info',function(sessioninfo){
     });
 });
 
-a.on('end_session',function(resultsPath){
+a.on('new_session',function(resultsPath){    
     // nothting yet
+    // reinitialize an empty leaderboard
+    sessionState.leaderboard = {};
+    // reset all the laps to zero
+    carState.map(function(car){
+        car.laps_completed = 0;
+        car.laps = [];
+    }); 
+    app.io.broadcast('all_car_state',carState);
 });
 
 // END SESSION EVENTS
@@ -90,7 +99,7 @@ a.on('connection_closed',function(clientinfo){
 a.on('car_update',function(carupdate){
     // if that particular car has not been initialized
     if(!carState[carupdate.car_id]){
-        // init the car
+        // init the car        
         initCar(carupdate.car_id);
         // and send a request for car info
         a.getCarInfo(carupdate.car_id);
@@ -119,8 +128,12 @@ a.on('car_info',function(carinfo){
 // RACE EVENTS
 
     a.on('lap_completed',function(clientinfo){
+        if(!carState[clientinfo.car_id].laps_completed){
+            carState[clientinfo.car_id].laps_completed = 0;
+        }
+        carState[clientinfo.car_id].laps_completed++;
         // update the laps for the current car
-        carState[clientinfo.car_id].laps[clientinfo.rlaps] = { time: clientinfo.laptime, 
+        carState[clientinfo.car_id].laps[carState[clientinfo.car_id].laps_completed] = { time: clientinfo.laptime, 
             valid: (clientinfo.cuts == 0)
         };
         // update the leaderboard
@@ -162,12 +175,14 @@ app.io.route('hello',function(req){
 app.use(express.static(path.join(__dirname, './public')));
 
 // TODO: ASK GARETH IF WE COULD DO THIS WITHOUT THE :id
-app.get('/tracks/:track/:track_config', function(req, res){	    
-    // req.params.track_config
-    var trackPath = req.params.track;
-    if(req.params.track_config != ""){
-        trackPath = path.join(req.params.track,req.params.track_config);
-    }
+app.get('/tracks/:track', function(req, res){
+    getTrackImage(res,req.params.track);
+});
+app.get('/tracks/:track/:track_config', function(req, res){	
+    getTrackImage(res, path.join(req.params.track,req.params.track_config));  
+});
+
+function getTrackImage(res, trackPath){
     var mapPath = path.join(contentPath, trackPath, 'map.png');
     fs.existsAsync(mapPath).then(function(exists){
         if (!exists) throw Error('File not found');
@@ -175,7 +190,7 @@ app.get('/tracks/:track/:track_config', function(req, res){
     }).catch(function(err){
         res.status(404).send('Nope!');
     });
-});
+}
 
 app.listen(80);
 
@@ -186,6 +201,7 @@ app.listen(80);
 function initCar(car_id) {
     carState[car_id] = {		
         laps: [],
+        laps_completed: 0,
         is_connected: false
     };
 }
@@ -208,7 +224,7 @@ var infoRequest = memoize(function infoRequest() {
             });
         }).return(info);
     }).then(function(info){
-        var infoPath = path.join(contentPath,sessionState.track,'ui_track.json');
+        var infoPath = path.join(contentPath,sessionState.track,'ui/ui_track.json');
         if(sessionState.track_config != ""){
             infoPath = path.join(contentPath,sessionState.track,'ui',sessionState.track_config,'ui_track.json');
         }

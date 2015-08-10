@@ -39,9 +39,9 @@ angular.module('app', [])
 	    });
 
 	    // TODO: FIX TIMING
-	    $interval(function(){
-			acsp.session_state.info.timeleft -= 1;				
-		}, 1000);
+	 //    $interval(function(){
+		// 	acsp.session_state.info.timeleft -= 1;				
+		// }, 1000);
 
 	    return acsp;
 	})
@@ -57,6 +57,11 @@ angular.module('app', [])
                 return client.is_connected;
             }).length;
         };
+    })
+    .filter('bestLap',function(){
+    	return function(laps){
+    		return _.min(_.pluck(_.where(laps, {valid:true}),'time')) | 0;
+    	};
     })
 
     .controller('MainCtrl', function(acsp){
@@ -94,30 +99,25 @@ angular.module('app', [])
 	        return style;
 	    };
 	    this.orderFunction = function (car) {
-	        var session = acsp.session_state.type;
+	        var session = acsp.session_state.type;	 
+	        var time = _.findWhere(acsp.session_state.leaderboard,{rcar_id: car.car_id}).rtime;       	        
 	        // if in race
 	        if (session == 3) {
-	            // return the car in front
-	            if (!car.normalized_spline_pos) {
-	                return -(car.laps - 1);
-	            }
-
-	            return -(car.laps + car.normalized_spline_pos);
+	        	laps = car.laps_completed;
+	            return -(laps + car.normalized_spline_pos);
 	        }
-	            // if in any other session
-	        else if (car.bestLap) {
+	        // if in any other session	        
+	        else if (time) {
 	            // return the best lap
-	            return car.bestLap;
+	            return time;
 	        }
 	            // no time has been set
-	        else if (!car.bestLap) {
-	            return car.car_id;
+	        else if (!time) {
+	            return Infinity;
 	        }
 	    };
 	    this.leaderLap = function () {
-	    	return 0;
-	    	// if(!acsp.sessionState.leaderboard){ return 0; }
-	     //    return _.max(_.pluck(acsp.sessionState.leaderboard, 'rlaps')) || 0;
+	        return _.max(_.pluck(acsp.car_state, 'laps_completed')) | 0;
 	    }
     });
 
