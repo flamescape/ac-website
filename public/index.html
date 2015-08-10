@@ -17,7 +17,7 @@
 			<tr>
 				<td>{{mc.acsp.sessionState.name}}</td>
 				<td>{{mc.acsp.info.ui.description}}, {{mc.acsp.info.ui.country}}</td>
-				<td>{{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}}</td>
+				<td>AIR: {{mc.acsp.sessionState.ambient_temp}}&deg;C <!-- {{mc.acsp.state | connected_clients}} / {{mc.acsp.info.maxclients}} --></td>
 			</tr>
 			</thead>
 			<tbody>
@@ -26,7 +26,7 @@
 					<span ng-hide='mc.acsp.sessionState.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.sessionState.laps}}</span>
 				</td>
 				<td>{{mc.acsp.info.ui.length}}m</td>
-				<td></td>
+				<td>TRACK: {{mc.acsp.sessionState.road_temp}}&deg;C</td>
 			</tr>
 			</tbody>			
 		</table>			
@@ -45,8 +45,7 @@
 		<table>
 		<thead>
 			<tr>				
-				<th>P</th>
-				<th>#</th>
+				<th>P</th>				
 				<th>Name</td>
 				<th>Car</td>
 				<th>Best Lap</td>
@@ -56,8 +55,7 @@
 		</thead>
 		</tbody>
 			<tr ng-repeat="c in mc.acsp.state | orderBy: mc.orderFunction" ng-click="mc.getCarInfo(c.car_id)">				
-				<th>{{$index + 1}}</th>
-				<td>IMG</td>
+				<th>{{$index + 1}}</th>				
 				<td>{{c.driver_name || '-'}}</td>
 				<td>{{c.car_model || '-'}}</td>
 				<td>{{c.bestLap | toLapTime}}</td>
