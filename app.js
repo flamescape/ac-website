@@ -171,8 +171,7 @@ app.io.route('hello',function(req){
     req.io.emit('all_car_state',carState);    
 
     getInfo().then(function(info){
-        // once we get that broadcast the new sessionState
-        console.log('telling client that there\'s %s seconds left', info.timeleft);
+        // once we get that broadcast the new sessionState        
         sessionState.info = info;
         req.io.emit('session_state',sessionState);
     });
