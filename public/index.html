@@ -22,7 +22,7 @@
 			</thead>
 			<tbody>
 			<tr>
-				<td><span ng-hide='mc.acsp.session_state.name == "Race"'><!-- {{mc.acsp.session_state.info.timeleft*1000|toLapTime:'m:ss'}} --></span>
+				<td><span ng-hide='mc.acsp.session_state.name == "Race"'>{{mc.acsp.session_state.info.timeleft|toLapTime:'m:ss:S'}}</span>
 					<span ng-hide='mc.acsp.session_state.name != "Race"'>L{{mc.leaderLap()}}/{{mc.acsp.session_state.laps}}</span>
 				</td>
 				<td>{{mc.acsp.session_state.info.ui.length}}m</td>
@@ -70,6 +70,7 @@
 		<img src="C:/Users/bjorn/Desktop/acsp/ac-website/public/content/logo.png">
 	</footer> -->
 </div>
+	<script src="js/date-utils.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>
 	<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js'></script>

@@ -17,6 +17,10 @@ angular.module('app', [])
 	    });
 	    io.on('session_state', function (session_state) {
 	        acsp.session_state = session_state;
+
+	    	acsp.session_state.end_time = (new Date()).add({seconds: acsp.session_state.info.timeleft});
+	    	console.log('ENDING AT:', acsp.session_state.end_time)
+
 	        $rootScope.$apply();
 	    });
 	    io.on('car_state', function (car_state) {
@@ -37,11 +41,14 @@ angular.module('app', [])
 	        _.extend(acsp.car_state[car_update.car_id], car_update);
 	        $rootScope.$apply();
 	    });
+	    
 
 	    // TODO: FIX TIMING
-	 //    $interval(function(){
-		// 	acsp.session_state.info.timeleft -= 1;				
-		// }, 1000);
+	    $interval(function(){
+	    	if (acsp.session_state && acsp.session_state.end_time) {
+				acsp.session_state.info.timeleft = Math.max((new Date()).getMillisecondsBetween(acsp.session_state.end_time), 0);
+			}
+		}, 20);
 
 	    return acsp;
 	})

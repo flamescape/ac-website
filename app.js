@@ -40,6 +40,7 @@ a.on('session_info',function(sessioninfo){
     // TODO: We should do this only once, is memoize enough?
     getInfo().then(function(info){
         // once we get that broadcast the new sessionState
+        console.log('telling server that there\'s %s seconds left', info.timeleft);
         sessionState.info = info;
         app.io.broadcast('session_state',sessionState);
     });
@@ -54,6 +55,7 @@ a.on('new_session',function(resultsPath){
         car.laps_completed = 0;
         car.laps = [];
     }); 
+    carState = _.where(carState, {is_connected: true});
     app.io.broadcast('all_car_state',carState);
 });
 
@@ -133,9 +135,7 @@ a.on('car_info',function(carinfo){
         }
         carState[clientinfo.car_id].laps_completed++;
         // update the laps for the current car
-        carState[clientinfo.car_id].laps[carState[clientinfo.car_id].laps_completed] = { time: clientinfo.laptime, 
-            valid: (clientinfo.cuts == 0)
-        };
+        carState[clientinfo.car_id].laps[carState[clientinfo.car_id].laps_completed] = { time: clientinfo.laptime, valid: (clientinfo.cuts == 0)};
         // update the leaderboard
         sessionState.leaderboard = clientinfo.leaderboard;
         // update the grip_level
@@ -168,8 +168,14 @@ a.on('car_info',function(carinfo){
 */
 
 app.io.route('hello',function(req){
-    req.io.emit('all_car_state',carState);
-    req.io.emit('session_state',sessionState);
+    req.io.emit('all_car_state',carState);    
+
+    getInfo().then(function(info){
+        // once we get that broadcast the new sessionState
+        console.log('telling client that there\'s %s seconds left', info.timeleft);
+        sessionState.info = info;
+        req.io.emit('session_state',sessionState);
+    });
 });
 
 app.use(express.static(path.join(__dirname, './public')));
